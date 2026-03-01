@@ -1,0 +1,15 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/chat/page": "app/chat/page.js",
+  "/agents/page": "app/agents/page.js",
+  "/content/page": "app/content/page.js",
+  "/comms/page": "app/comms/page.js",
+  "/knowledge/page": "app/knowledge/page.js",
+  "/ops/page": "app/ops/page.js",
+  "/schedule/page": "app/schedule/page.js",
+  "/tasks/page": "app/tasks/page.js",
+  "/page": "app/page.js",
+  "/finances/revenue/page": "app/finances/revenue/page.js",
+  "/finances/accounting/page": "app/finances/accounting/page.js",
+  "/code/page": "app/code/page.js"
+}

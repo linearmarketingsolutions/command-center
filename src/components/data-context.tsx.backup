@@ -1,0 +1,245 @@
+"use client";
+
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
+
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  status: "pending" | "in_progress" | "completed" | "archived";
+  priority: "low" | "medium" | "high" | "urgent";
+  dueDate?: string;
+  business: "personal" | "lms" | "commit";
+  tags: string[];
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  duration: string;
+  type: string;
+  location: string;
+  business: "personal" | "lms" | "commit";
+  notes?: string;
+}
+
+export interface Client {
+  id: string;
+  name: string;
+  business: "lms" | "commit";
+  mrr: number;
+  status: "active" | "paused" | "churned";
+  notes?: string;
+  lastContact?: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface Transaction {
+  id: string;
+  description: string;
+  amount: number;
+  date: string;
+  type: "income" | "expense";
+  business: "personal" | "lms" | "commit";
+  category: string;
+}
+
+export interface Document {
+  id: string;
+  name: string;
+  type: string;
+  size: string;
+  uploadDate: string;
+  business: "personal" | "lms" | "commit";
+  clientId?: string;
+  url?: string;
+}
+
+interface DataState {
+  tasks: Task[];
+  events: CalendarEvent[];
+  clients: Client[];
+  transactions: Transaction[];
+  documents: Document[];
+  metrics: {
+    lms: { mrr: number; target: number; clients: number };
+    commit: { mrr: number; target: number; clients: number };
+    personal: { balance: number; income: number; expenses: number };
+  };
+}
+
+interface DataContextType extends DataState {
+  addTask: (task: Omit<Task, "id">) => void;
+  updateTask: (id: string, updates: Partial<Task>) => void;
+  deleteTask: (id: string) => void;
+  addEvent: (event: Omit<CalendarEvent, "id">) => void;
+  updateEvent: (id: string, updates: Partial<CalendarEvent>) => void;
+  deleteEvent: (id: string) => void;
+  addClient: (client: Omit<Client, "id">) => void;
+  updateClient: (id: string, updates: Partial<Client>) => void;
+  deleteClient: (id: string) => void;
+  addTransaction: (transaction: Omit<Transaction, "id">) => void;
+  updateTransaction: (id: string, updates: Partial<Transaction>) => void;
+  deleteTransaction: (id: string) => void;
+  addDocument: (document: Omit<Document, "id">) => void;
+  deleteDocument: (id: string) => void;
+  updateMetric: (business: "lms" | "commit" | "personal", key: string, value: number) => void;
+  exportData: () => string;
+  importData: (jsonString: string) => boolean;
+  resetAllData: () => void;
+}
+
+const DataContext = createContext<DataContextType | undefined>(undefined);
+const generateId = () => Math.random().toString(36).substr(2, 9);
+const STORAGE_KEY = "command-center-data";
+
+const getDefaultData = (): DataState => ({
+  tasks: [
+    { id: "1", title: "Review Q1 marketing strategy", description: "Analyze current performance", status: "in_progress", priority: "high", dueDate: "2026-03-01", business: "lms", tags: ["strategy", "q1"] },
+    { id: "2", title: "Juan Luna PT Session", status: "pending", priority: "high", dueDate: "2026-02-28", business: "commit", tags: ["pt", "in-person"] },
+  ],
+  events: [
+    { id: "1", title: "Team Standup", date: "2026-02-28", time: "10:00 AM", duration: "30 min", type: "meeting", location: "Video Call", business: "lms" },
+    { id: "2", title: "Juan Luna PT", date: "2026-02-28", time: "4:00 PM", duration: "1.5 hr", type: "pt", location: "Glendale Studio", business: "commit" },
+  ],
+  clients: [
+    { id: "1", name: "Point 2 Point", mrr: 3000, status: "active", business: "lms", lastContact: "2026-02-25" },
+    { id: "2", name: "ACX Technologies", mrr: 2000, status: "active", business: "lms", lastContact: "2026-02-20" },
+    { id: "3", name: "Juan Luna", mrr: 800, status: "active", business: "commit", lastContact: "2026-02-26" },
+  ],
+  transactions: [
+    { id: "1", description: "P2P Payment", amount: 3000, date: "2026-02-01", type: "income", business: "lms", category: "client" },
+    { id: "2", description: "Vercel Hosting", amount: -50, date: "2026-02-20", type: "expense", business: "lms", category: "software" },
+  ],
+  documents: [],
+  metrics: {
+    lms: { mrr: 5000, target: 10000, clients: 2 },
+    commit: { mrr: 1980, target: 3500, clients: 5 },
+    personal: { balance: 2500, income: 6980, expenses: 4200 },
+  },
+});
+
+export function DataProvider({ children }: { children: ReactNode }) {
+  const [data, setData] = useState<DataState>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          return {
+            tasks: parsed.tasks || [],
+            events: parsed.events || [],
+            clients: parsed.clients || [],
+            transactions: parsed.transactions || [],
+            documents: parsed.documents || [],
+            metrics: parsed.metrics || getDefaultData().metrics,
+          };
+        } catch (e) { console.error("Failed to parse saved data:", e); }
+      }
+    }
+    return getDefaultData();
+  });
+
+  const { tasks, events, clients, transactions, documents, metrics } = data;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }, [data]);
+
+  const addTask = useCallback((task: Omit<Task, "id">) => {
+    setData((prev: DataState) => ({ ...prev, tasks: [...prev.tasks, { ...task, id: generateId() }] }));
+  }, []);
+  const updateTask = useCallback((id: string, updates: Partial<Task>) => {
+    setData((prev: DataState) => ({ ...prev, tasks: prev.tasks.map(t => t.id === id ? { ...t, ...updates } : t) }));
+  }, []);
+  const deleteTask = useCallback((id: string) => {
+    setData((prev: DataState) => ({ ...prev, tasks: prev.tasks.filter(t => t.id !== id) }));
+  }, []);
+
+  const addEvent = useCallback((event: Omit<CalendarEvent, "id">) => {
+    setData((prev: DataState) => ({ ...prev, events: [...prev.events, { ...event, id: generateId() }] }));
+  }, []);
+  const updateEvent = useCallback((id: string, updates: Partial<CalendarEvent>) => {
+    setData((prev: DataState) => ({ ...prev, events: prev.events.map(e => e.id === id ? { ...e, ...updates } : e) }));
+  }, []);
+  const deleteEvent = useCallback((id: string) => {
+    setData((prev: DataState) => ({ ...prev, events: prev.events.filter(e => e.id !== id) }));
+  }, []);
+
+  const addClient = useCallback((client: Omit<Client, "id">) => {
+    setData((prev: DataState) => ({ ...prev, clients: [...prev.clients, { ...client, id: generateId() }] }));
+  }, []);
+  const updateClient = useCallback((id: string, updates: Partial<Client>) => {
+    setData((prev: DataState) => ({ ...prev, clients: prev.clients.map(c => c.id === id ? { ...c, ...updates } : c) }));
+  }, []);
+  const deleteClient = useCallback((id: string) => {
+    setData((prev: DataState) => ({ ...prev, clients: prev.clients.filter(c => c.id !== id) }));
+  }, []);
+
+  const addTransaction = useCallback((transaction: Omit<Transaction, "id">) => {
+    setData((prev: DataState) => ({ ...prev, transactions: [...prev.transactions, { ...transaction, id: generateId() }] }));
+  }, []);
+  const updateTransaction = useCallback((id: string, updates: Partial<Transaction>) => {
+    setData((prev: DataState) => ({ ...prev, transactions: prev.transactions.map(t => t.id === id ? { ...t, ...updates } : t) }));
+  }, []);
+  const deleteTransaction = useCallback((id: string) => {
+    setData((prev: DataState) => ({ ...prev, transactions: prev.transactions.filter(t => t.id !== id) }));
+  }, []);
+
+  const addDocument = useCallback((document: Omit<Document, "id">) => {
+    setData((prev: DataState) => ({ ...prev, documents: [...prev.documents, { ...document, id: generateId() }] }));
+  }, []);
+  const deleteDocument = useCallback((id: string) => {
+    setData((prev: DataState) => ({ ...prev, documents: prev.documents.filter(d => d.id !== id) }));
+  }, []);
+
+  const updateMetric = useCallback((business: "lms" | "commit" | "personal", key: string, value: number) => {
+    setData((prev: DataState) => ({
+      ...prev,
+      metrics: { ...prev.metrics, [business]: { ...prev.metrics[business], [key]: value } },
+    }));
+  }, []);
+
+  const exportData = useCallback(() => JSON.stringify(data, null, 2), [data]);
+  const importData = useCallback((jsonString: string) => {
+    try {
+      const parsed = JSON.parse(jsonString);
+      setData({
+        tasks: parsed.tasks || [],
+        events: parsed.events || [],
+        clients: parsed.clients || [],
+        transactions: parsed.transactions || [],
+        documents: parsed.documents || [],
+        metrics: parsed.metrics || getDefaultData().metrics,
+      });
+      return true;
+    } catch { return false; }
+  }, []);
+  const resetAllData = useCallback(() => {
+    if (typeof window !== "undefined") localStorage.removeItem(STORAGE_KEY);
+    setData(getDefaultData());
+  }, []);
+
+  return (
+    <DataContext.Provider value={{
+      tasks, addTask, updateTask, deleteTask,
+      events, addEvent, updateEvent, deleteEvent,
+      clients, addClient, updateClient, deleteClient,
+      transactions, addTransaction, updateTransaction, deleteTransaction,
+      documents, addDocument, deleteDocument,
+      metrics, updateMetric,
+      exportData, importData, resetAllData,
+    }}>
+      {children}
+    </DataContext.Provider>
+  );
+}
+
+export function useData() {
+  const context = useContext(DataContext);
+  if (context === undefined) throw new Error("useData must be used within a DataProvider");
+  return context;
+}
