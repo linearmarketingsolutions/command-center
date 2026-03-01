@@ -1,15 +1,15 @@
 {
   "/_not-found/page": "/_not-found",
+  "/chat/page": "/chat",
   "/agents/page": "/agents",
-  "/knowledge/page": "/knowledge",
+  "/comms/page": "/comms",
   "/content/page": "/content",
+  "/knowledge/page": "/knowledge",
   "/ops/page": "/ops",
   "/schedule/page": "/schedule",
   "/tasks/page": "/tasks",
-  "/comms/page": "/comms",
-  "/chat/page": "/chat",
   "/page": "/",
-  "/finances/revenue/page": "/finances/revenue",
   "/finances/accounting/page": "/finances/accounting",
+  "/finances/revenue/page": "/finances/revenue",
   "/code/page": "/code"
 }
