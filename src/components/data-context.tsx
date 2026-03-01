@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo } from "react";
 import { format, isToday, isBefore, isAfter, addDays, isSameDay, parseISO } from "date-fns";
+import { supabase } from "@/lib/supabase";
 
 // === NEW TASK SYSTEM ===
 
