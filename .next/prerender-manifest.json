@@ -26,30 +26,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/chat": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/chat",
-      "dataRoute": "/chat.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/schedule": {
       "experimentalBypassFor": [
         {
@@ -74,7 +50,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/code": {
+    "/tasks": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -87,8 +63,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/code",
-      "dataRoute": "/code.rsc",
+      "srcRoute": "/tasks",
+      "dataRoute": "/tasks.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -98,7 +74,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/finances/accounting": {
+    "/content": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -111,8 +87,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/finances/accounting",
-      "dataRoute": "/finances/accounting.rsc",
+      "srcRoute": "/content",
+      "dataRoute": "/content.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -170,7 +146,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/content": {
+    "/finances/accounting": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -183,8 +159,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/content",
-      "dataRoute": "/content.rsc",
+      "srcRoute": "/finances/accounting",
+      "dataRoute": "/finances/accounting.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -194,7 +170,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/tasks": {
+    "/code": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -207,8 +183,80 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/tasks",
-      "dataRoute": "/tasks.rsc",
+      "srcRoute": "/code",
+      "dataRoute": "/code.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/chat": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/chat",
+      "dataRoute": "/chat.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/ops": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/ops",
+      "dataRoute": "/ops.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/aria": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/aria",
+      "dataRoute": "/aria.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -242,30 +290,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/",
-      "dataRoute": "/index.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/comms": {
       "experimentalBypassFor": [
         {
@@ -290,7 +314,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/ops": {
+    "/": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -303,8 +327,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/ops",
-      "dataRoute": "/ops.rsc",
+      "srcRoute": "/",
+      "dataRoute": "/index.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",

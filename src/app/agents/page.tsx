@@ -1,210 +1,215 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  Bot,
-  Plus,
-  Play,
-  Pause,
-  Settings,
-  Activity,
-  Grid3X3,
-  List,
-  Search,
-  MoreVertical,
-} from "lucide-react";
+import { Bot, Sparkles, MessageSquare, Play, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-const tabs = [
-  { name: "All Agents", icon: Grid3X3, href: "/agents" },
-  { name: "Active", icon: Play, href: "/agents/active" },
-  { name: "Paused", icon: Pause, href: "/agents/paused" },
-  { name: "Settings", icon: Settings, href: "/agents/settings" },
-];
+interface Agent {
+  id: string;
+  name: string;
+  description: string;
+  icon: any;
+  status: "active" | "beta" | "offline";
+  color: string;
+  features: string[];
+}
 
-const agents = [
+const agents: Agent[] = [
   {
-    id: 1,
-    name: "Content Writer",
+    id: "aria",
+    name: "ARIA",
+    description: "Adaptive Responsive Interface Architect — designs and builds UI/UX",
+    icon: Sparkles,
     status: "active",
-    type: "Creative",
-    tasks: 12,
-    successRate: "94%",
-    lastActive: "2 min ago",
+    color: "from-purple-500 via-cyan-500 to-blue-500",
+    features: ["Design concepts", "React/Next.js code", "Animations", "Accessibility"]
   },
   {
-    id: 2,
-    name: "Email Assistant",
+    id: "marvin",
+    name: "Marvin",
+    description: "Chief of Staff — orchestration, task management, research",
+    icon: Bot,
     status: "active",
-    type: "Communication",
-    tasks: 48,
-    successRate: "98%",
-    lastActive: "5 min ago",
-  },
-  {
-    id: 3,
-    name: "Code Reviewer",
-    status: "paused",
-    type: "Development",
-    tasks: 23,
-    successRate: "91%",
-    lastActive: "1 hr ago",
-  },
-  {
-    id: 4,
-    name: "Data Analyst",
-    status: "active",
-    type: "Analytics",
-    tasks: 7,
-    successRate: "96%",
-    lastActive: "10 min ago",
-  },
-  {
-    id: 5,
-    name: "Social Manager",
-    status: "active",
-    type: "Marketing",
-    tasks: 34,
-    successRate: "92%",
-    lastActive: "15 min ago",
-  },
-  {
-    id: 6,
-    name: "Research Bot",
-    status: "paused",
-    type: "Research",
-    tasks: 89,
-    successRate: "88%",
-    lastActive: "3 hr ago",
-  },
+    color: "from-emerald-500 to-teal-500",
+    features: ["Task tracking", "Research", "Coordination", "Strategy"]
+  }
 ];
 
 export default function AgentsPage() {
-  const pathname = usePathname();
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [chatInput, setChatInput] = useState("");
+  const router = useRouter();
+
+  const startAgentChat = (agent: Agent) => {
+    if (agent.id === "aria") {
+      // Open ARIA in full interface
+      router.push("/aria");
+    }
+  };
+
+  const handleQuickChat = () => {
+    if (!chatInput.trim()) return;
+    // Simple chat functionality - would connect to agent backend
+    console.log("Quick chat:", chatInput);
+    setChatInput("");
+  };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
-      {/* Tab Navigation */}
-      <div className="border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <h1 className="text-xl font-bold flex items-center">
-              <Bot className="w-5 h-5 mr-2 text-[#e94560]" />
-              Agents
-            </h1>
-            <nav className="flex items-center space-x-1">
-              {tabs.map((tab) => {
-                const isActive = pathname === tab.href;
-                return (
-                  <Link
-                    key={tab.name}
-                    href={tab.href}
-                    className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                      isActive
-                        ? "bg-[#e94560]/20 text-[#e94560]"
-                        : "text-gray-400 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    <tab.icon className="w-4 h-4 mr-2" />
-                    <span className="hidden sm:inline">{tab.name}</span>
-                  </Link>
-                );
-              })}
-              <button className="ml-4 flex items-center px-3 py-2 bg-[#e94560] hover:bg-[#e94560]/80 rounded-lg text-sm font-medium transition-colors">
-                <Plus className="w-4 h-4 mr-1" />
-                <span className="hidden sm:inline">New Agent</span>
-              </button>
-            </nav>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">Agents</h2>
+          <p className="text-sm text-gray-400">AI assistants for specialized tasks</p>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Search & Filter */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex flex-col sm:flex-row gap-4 mb-6"
-        >
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search agents..."
-              className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:border-[#e94560]/50"
-            />
-          </div>
-          <div className="flex gap-2">
-            <button className="flex items-center px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm hover:bg-white/10 transition-colors">
-              <List className="w-4 h-4 mr-2" />
-              List
-            </button>
-            <button className="flex items-center px-3 py-2 bg-[#e94560]/20 border border-[#e94560]/50 rounded-lg text-sm text-[#e94560]">
-              <Grid3X3 className="w-4 h-4 mr-2" />
-              Grid
-            </button>
-          </div>
-        </motion.div>
+      {/* Quick Chat */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6"
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <MessageSquare className="w-5 h-5 text-cyan-400" />
+          <h3 className="font-medium">Quick Agent Chat</h3>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleQuickChat()}
+            placeholder="Ask any agent for quick help..."
+            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-white/30"
+          />
+          <button
+            onClick={handleQuickChat}
+            disabled={!chatInput.trim()}
+            className="px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/30 rounded-lg text-cyan-400 disabled:opacity-50 transition-colors"
+          >
+            <MessageSquare className="w-4 h-4" />
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-gray-500">
+          For complex tasks, select an agent below and start a dedicated session
+        </p>
+      </motion.div>
 
-        {/* Agents Grid */}
+      {/* Agents List */}
+      <div className="grid gap-4">
+        {agents.map((agent, index) => (
+          <motion.div
+            key={agent.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/[0.07] transition-colors group cursor-pointer"
+            onClick={() => setSelectedAgent(agent)}
+          >
+            <div className="flex items-start gap-4">
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center flex-shrink-0`}>
+                <agent.icon className="w-6 h-6 text-white" />
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-1">
+                  <h3 className="text-lg font-semibold">{agent.name}</h3>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    agent.status === "active" 
+                      ? "bg-green-500/20 text-green-400" 
+                      : agent.status === "beta"
+                      ? "bg-yellow-500/20 text-yellow-400"
+                      : "bg-gray-500/20 text-gray-400"
+                  }`}>
+                    {agent.status}
+                  </span>
+                </div>
+                
+                <p className="text-gray-400 mb-3">{agent.description}</p>
+                
+                <div className="flex flex-wrap gap-2">
+                  {agent.features.map((feature) => (
+                    <span key={feature} className="text-xs px-2 py-1 bg-white/5 rounded text-gray-300">
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  startAgentChat(agent);
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors opacity-0 group-hover:opacity-100"
+              >
+                <Play className="w-4 h-4" />
+                Start Chat
+              </button>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Selected Agent Modal */}
+      {selectedAgent && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedAgent(null)}
         >
-          {agents.map((agent, index) => (
-            <motion.div
-              key={agent.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-              className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-5 hover:bg-white/10 hover:border-[#e94560]/30 transition-all duration-300"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 rounded-lg bg-[#e94560]/20 flex items-center justify-center mr-3">
-                    <Bot className="w-5 h-5 text-[#e94560]" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm">{agent.name}</h3>
-                    <span className="text-xs text-gray-500">{agent.type}</span>
-                  </div>
-                </div>
-                <button className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <MoreVertical className="w-4 h-4 text-gray-500" />
-                </button>
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-[#0f0f14] border border-white/10 rounded-2xl p-6 max-w-lg w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${selectedAgent.color} flex items-center justify-center`}>
+                <selectedAgent.icon className="w-8 h-8 text-white" />
               </div>
+              <div>
+                <h3 className="text-2xl font-semibold">{selectedAgent.name}</h3>
+                <p className="text-gray-400">{selectedAgent.description}</p>
+              </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-white/5 rounded-lg p-2">
-                  <p className="text-xs text-gray-500">Tasks</p>
-                  <p className="text-lg font-semibold">{agent.tasks}</p>
-                </div>
-                <div className="bg-white/5 rounded-lg p-2">
-                  <p className="text-xs text-gray-500">Success</p>
-                  <p className="text-lg font-semibold text-green-500">{agent.successRate}</p>
-                </div>
+            <div className="space-y-4 mb-6">
+              <h4 className="font-medium text-gray-300">Capabilities</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {selectedAgent.features.map((feature) => (
+                  <div key={feature} className="flex items-center gap-2 text-sm text-gray-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                    {feature}
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div
-                    className={`w-2 h-2 rounded-full mr-2 ${
-                      agent.status === "active" ? "bg-green-500" : "bg-yellow-500"
-                    }`}
-                  />
-                  <span className="text-xs text-gray-400 capitalize">{agent.status}</span>
-                </div>
-                <span className="text-xs text-gray-500">{agent.lastActive}</span>
-              </div>
-            </motion.div>
-          ))}
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setSelectedAgent(null);
+                  startAgentChat(selectedAgent);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-medium"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Start Full Session
+              </button>
+              <button
+                onClick={() => setSelectedAgent(null)}
+                className="px-4 py-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
         </motion.div>
-      </div>
+      )}
     </div>
   );
 }
